@@ -1,0 +1,35 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif; /* Apply the Poppins font globally */
+    background-color: #f7fafc; /* Background color for the body */
+    color: #333; /* Default text color */
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased; /* Smooth font rendering on macOS */
+    -moz-osx-font-smoothing: grayscale; /* Smooth font rendering on macOS */
+  }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif; /* Use Poppins for headers as well */
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input, button, select, textarea {
+  font-family: 'Poppins', sans-serif; /* Apply Poppins to form elements */
+}
+
+button {
+  cursor: pointer;
+}
