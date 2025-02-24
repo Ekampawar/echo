@@ -1,26 +1,32 @@
 const User = require('../models/user');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { hashPassword, comparePassword } = require('../utils/hash');  // Import hash utilities
+const { generateToken } = require('../utils/jwt');  // Import JWT utility
 
+// Register user logic
 exports.registerUser = async ({ username, email, password }) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         throw new Error('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword });
+    // Hash the password before saving
+    const hashedPassword = await hashPassword(password);
     
+    // Create new user
+    const newUser = await User.create({ username, email, password: hashedPassword });
+
     return newUser;
 };
 
+// Login user logic
 exports.loginUser = async ({ email, password }) => {
     const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !(await comparePassword(password, user.password))) {
         throw new Error('Invalid email or password');
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    
+    // Generate a JWT token
+    const token = generateToken({ id: user._id, role: user.role });
+
     return { token, user };
 };
