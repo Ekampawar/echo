@@ -11,14 +11,12 @@ const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const errorMiddleware = require('./middleware/errorMiddleware');
-const loggerMiddleware = require('./middleware/loggerMiddleware');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use(loggerMiddleware); // Logs each request
 
 // Routes
 app.use('/api/auth', authRoutes);

@@ -19,7 +19,7 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-exports.deleteBlogByAdmin = async (req, res) => {
+exports.deleteBlog = async (req, res) => {
     try {
         await Blog.findByIdAndDelete(req.params.id);
         res.json({ message: 'Blog deleted by admin' });
