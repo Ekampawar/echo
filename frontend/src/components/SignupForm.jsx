@@ -15,7 +15,7 @@ const SignupForm = () => {
 
         try {
             // Using axiosInstance to make the API request
-            await axiosInstance.post("/api/auth/register", userData);
+            await axiosInstance.post("/auth/register", userData);
             navigate("/login");
         } catch (error) {
             // Handle error and show message to the user

@@ -9,7 +9,6 @@ const commentRoutes = require('./routes/commentRoutes');
 const likeRoutes = require('./routes/likeRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 const app = express();

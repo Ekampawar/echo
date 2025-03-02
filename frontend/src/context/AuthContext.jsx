@@ -28,10 +28,23 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axiosInstance.post("/login", { email, password });
+      const res = await axiosInstance.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
       setUser(res.data.user);
-      navigate("/UserDashboard");
+
+      // Fetch the user's role
+      const roleResponse = await axiosInstance.get("/auth/user-role", {
+        headers: {
+          Authorization: `Bearer ${res.data.token}`
+        }
+      });
+
+      // Redirect to the appropriate dashboard based on the user's role
+      if (roleResponse.data.role === 'admin') {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
     } catch (err) {
       console.error("Login failed:", err.response?.data?.message || err.message);
     }

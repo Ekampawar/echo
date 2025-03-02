@@ -1,15 +1,11 @@
 const { body } = require('express-validator');
 
-const blogValidator = {
-    create: [
-        body('title').notEmpty().withMessage('Title is required'),
-        body('content').notEmpty().withMessage('Content is required'),
-    ],
-    
-    update: [
-        body('title').optional().notEmpty().withMessage('Title cannot be empty'),
-        body('content').optional().notEmpty().withMessage('Content cannot be empty'),
-    ]
-};
+exports.create = [
+    body('title').notEmpty().withMessage('Title is required').isLength({ min: 3 }).withMessage('Title must be at least 3 characters long'),
+    body('content').notEmpty().withMessage('Content is required')
+];
 
-module.exports = blogValidator;
+exports.update = [
+    body('title').optional().isLength({ min: 3 }).withMessage('Title must be at least 3 characters long'),
+    body('content').optional().notEmpty().withMessage('Content is required')
+];
