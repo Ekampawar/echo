@@ -15,13 +15,24 @@ const LoginForm = () => {
 
         try {
             // Make the login request using axiosInstance
-            const response = await axiosInstance.post("/api/auth/login", credentials);
+            const response = await axiosInstance.post("/auth/login", credentials);
             
             // Store the token in localStorage (you can add more logic like storing user data here)
             localStorage.setItem("token", response.data.token);
 
-            // Redirect to user dashboard or home page
-            navigate("/UserDashboard");
+            // Fetch the user's role
+            const roleResponse = await axiosInstance.get("/auth/user-role", {
+                headers: {
+                    Authorization: `Bearer ${response.data.token}`
+                }
+            });
+
+            // Redirect to the appropriate dashboard based on the user's role
+            if (roleResponse.data.role === 'admin') {
+                navigate("/admin-dashboard");
+            } else {
+                navigate("/user-dashboard");
+            }
         } catch (error) {
             // Handle error and show message to the user
             setError(error.response?.data?.message || "An error occurred during login.");

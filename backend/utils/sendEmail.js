@@ -1,4 +1,4 @@
-const nodemailer = require ("nodemailer");
+const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, subject, text) => {
     try {
@@ -20,7 +20,8 @@ const sendEmail = async (to, subject, text) => {
         console.log("Email sent successfully");
     } catch (error) {
         console.error("Error sending email:", error);
+        throw new Error("Failed to send email. Please try again later.");
     }
 };
- 
+
 module.exports = sendEmail;
