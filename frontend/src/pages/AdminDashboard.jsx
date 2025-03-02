@@ -1,63 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from "../utils/axiosInstance";  // Import your custom axios instance
 
 const AdminDashboard = () => {
-    const [users, setUsers] = useState([]);
-    const [blogs, setBlogs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const [usersList, setUsersList] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAdminData = async () => {
-            try {
-                const usersResponse = await axios.get('/api/admin/users');
-                const blogsResponse = await axios.get('/api/admin/blogs');
-                setUsers(usersResponse.data);
-                setBlogs(blogsResponse.data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login"); // Redirect to login if no token is found
+        }
 
-        fetchAdminData();
-    }, []);
+        axiosInstance
+            .get("/auth/user", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then((response) => {
+                setUserData(response.data);
+            })
+            .catch(() => {
+                navigate("/login"); // Redirect to login if error occurs
+            });
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+        // Fetch all users (admin feature)
+        axiosInstance
+            .get("/admin/users", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then((response) => {
+                setUsersList(response.data);
+            })
+            .catch((error) => {
+                console.error("Failed to fetch users:", error);
+            });
+    }, [navigate]);
 
     return (
-        <div>
-            <h2>Admin Dashboard</h2>
-            <p>Welcome, Admin! Here you can manage users, blogs, and more.</p>
-            <div>
-                <h3>Users</h3>
-                {users.map((user) => (
-                    <div key={user._id}>
-                        <p>Username: {user.username}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        {/* Add buttons for updating role, banning user, etc. */}
-                    </div>
-                ))}
-            </div>
-            <div>
-                <h3>Blogs</h3>
-                {blogs.map((blog) => (
-                    <div key={blog._id}>
-                        <h4>{blog.title}</h4>
-                        <p>{blog.content}</p>
-                        <p>Author: {blog.author.username}</p>
-                        {/* Add buttons for updating or deleting blog */}
-                    </div>
-                ))}
-            </div>
+        <div className="dashboard">
+            <h2>Welcome to Admin Dashboard</h2>
+            {userData ? (
+                <div>
+                    <h3>Admin Information</h3>
+                    <p>Name: {userData.name}</p>
+                    <p>Email: {userData.email}</p>
+                    <p>Role: {userData.role}</p>
+                    {/* Add more admin-specific features */}
+                </div>
+            ) : (
+                <p>Loading admin data...</p>
+            )}
+
+            <h3>Manage Users</h3>
+            {usersList.length > 0 ? (
+                <ul>
+                    {usersList.map((user) => (
+                        <li key={user.id}>
+                            <p>Name: {user.name}</p>
+                            <p>Email: {user.email}</p>
+                            {/* Add actions like Edit, Delete for admin */}
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No users found</p>
+            )}
         </div>
     );
 };

@@ -1,57 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserDashboard = () => {
-    const [profile, setProfile] = useState({});
-    const [blogs, setBlogs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { user, logout, loading } = useAuth();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const profileResponse = await axios.get('/api/user/profile');
-                const blogsResponse = await axios.get('/api/user/blogs');
-                setProfile(profileResponse.data);
-                setBlogs(blogsResponse.data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else {
+      setUserData(user);
     }
+  }, [user, navigate]);
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+  const handleLogout = () => {
+    logout();
+  };
 
-    return (
-        <div>
-            <h2>User Dashboard</h2>
-            <div>
-                <h3>Profile</h3>
-                <p>Username: {profile.username}</p>
-                <p>Email: {profile.email}</p>
-                <img src={profile.profilePhoto} alt="Profile" width="100" />
+  return (
+    <div className="dashboard-container">
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <h1>User Dashboard</h1>
+          {userData ? (
+            <div className="user-info">
+              <p><strong>Name:</strong> {userData.name}</p>
+              <p><strong>Email:</strong> {userData.email}</p>
+              <p><strong>Role:</strong> {userData.role}</p>
+
+              <button onClick={() => navigate('/profile')} className="btn">Edit Profile</button>
+              <button onClick={handleLogout} className="btn logout-btn">Logout</button>
             </div>
-            <div>
-                <h3>Your Blogs</h3>
-                {blogs.map((blog) => (
-                    <div key={blog._id}>
-                        <h4>{blog.title}</h4>
-                        <p>{blog.content}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+          ) : (
+            <p>No user data available</p>
+          )}
+        </>
+      )}
+    </div>
+  );
 };
 
 export default UserDashboard;
