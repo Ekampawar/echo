@@ -1,31 +1,36 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import logo from "../assets/logo.png"; // Path to your logo image
+import logo from "../assets/logo.png"; // Ensure logo is in the correct path
 import "../styles/Navbar.css"; // Import the CSS file
 
 const Navbar = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user } = useContext(AuthContext); // Removed logout from Navbar
 
     return (
         <nav className="navbar">
+            {/* Logo Section */}
             <div className="logo-container">
-                <img src={logo} alt="Logo" className="logo" />
+                <Link to="/">
+                    <img src={logo} alt="Logo" className="logo" />
+                </Link>
             </div>
+
+            {/* Navigation Links */}
             <div className="link-container">
-                <Link to="/Home">Home</Link>
+                <Link to="/">Home</Link>
                 <Link to="/blogs">Blogs</Link>
-                <Link to="/About">About</Link>
+                <Link to="/about">About</Link>
+                <Link to="/contact">Contact Us</Link>
 
                 {!user ? (
                     <>
-                        <Link to="/Signup">Signup</Link>
-                        <Link to="/Login">Login</Link>
+                        <Link to="/signup">Signup</Link>
+                        <Link to="/login">Login</Link>
                     </>
                 ) : (
                     <>
-                        <Link to="/UserDashboard">Dashboard</Link>
-                        <button onClick={logout} className="logout-btn">Logout</button>
+                        <Link to="/user-dashboard">Dashboard</Link>
                     </>
                 )}
             </div>

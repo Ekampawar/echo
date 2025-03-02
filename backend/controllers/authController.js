@@ -8,6 +8,8 @@ const crypto = require('crypto');
 exports.register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
+        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' });
@@ -33,7 +35,8 @@ exports.login = async (req, res) => {
         }
 
         const token = generateToken({ id: user._id, role: user.role });
-        res.status(200).json({ token, user });
+        // Add user data to the response
+        res.status(200).json({ token, user }); 
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Login failed. Please try again.' });
@@ -46,7 +49,7 @@ exports.forgotPassword = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'If the email exists in our records, you will receive a password reset link.' });
         }
 
         const resetToken = crypto.randomBytes(32).toString('hex');
@@ -80,10 +83,10 @@ exports.resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ error: 'Invalid or expired token' });
+            return res.status(401).json({ error: 'Invalid or expired token' });
         }
 
-        user.password = await hashPassword(newPassword, 10);
+        user.password = await hashPassword(newPassword);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
@@ -94,3 +97,14 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while resetting your password. Please try again.' });
     }
 };
+
+// Controller for user data retrieval (user and role)
+exports.getUserData = async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('-password'); // Exclude password
+      res.json({ user, role: req.user.role });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ error: 'An error occurred while fetching user data' });
+    }
+  };

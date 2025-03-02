@@ -1,63 +1,77 @@
-import { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosInstance';
 
-// Set up axios instance with a base URL for API requests
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api", // Replace with your actual backend API URL
-});
-
+// Create the AuthContext to provide authentication state globally
 export const AuthContext = createContext();
+
+// Custom hook to access AuthContext
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Check for token in localStorage when the app initializes
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axiosInstance
-        .get("/user", { headers: { Authorization: `Bearer ${token}` } })
-        .then((response) => setUser(response.data))
-        .catch(() => {
-          localStorage.removeItem("token");
-          navigate("/login"); // Redirect to login if token is invalid
-        });
-    }
-  }, [navigate]);
+    const token = localStorage.getItem('token');
 
+    if (!token) {
+      setLoading(false);
+      if (window.location.pathname !== '/login') {
+        navigate('/login');
+      }
+      return;
+    }
+
+    setLoading(true);
+    axiosInstance
+      .get('/auth/user', { headers: { Authorization: `Bearer ${token}` } })
+      .then(response => {
+        setUser(response.data.user);
+      })
+      .catch(() => {
+        localStorage.removeItem('token');
+        setError('Session expired or token invalid. Please log in again.');
+        if (window.location.pathname !== '/login') {
+          navigate('/login');
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []); // useEffect now runs only once on mount
+
+  // Login function
   const login = async (email, password) => {
     try {
-      const res = await axiosInstance.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
+      setLoading(true);
+      const res = await axiosInstance.post('/auth/login', { email, password });
+      localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
-
-      // Fetch the user's role
-      const roleResponse = await axiosInstance.get("/auth/user-role", {
-        headers: {
-          Authorization: `Bearer ${res.data.token}`
-        }
-      });
-
-      // Redirect to the appropriate dashboard based on the user's role
-      if (roleResponse.data.role === 'admin') {
-        navigate("/admin-dashboard");
+      if (res.data.user.role === 'admin') {
+        navigate('/admin-dashboard');
       } else {
-        navigate("/user-dashboard");
+        navigate('/user-dashboard');
       }
     } catch (err) {
-      console.error("Login failed:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Logout function
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setUser(null);
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, error }}>
       {children}
     </AuthContext.Provider>
   );
