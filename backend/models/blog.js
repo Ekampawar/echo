@@ -15,7 +15,7 @@ const BlogSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Author is required']
+        required: [true, 'Author is required'],
     },
     images: [{
         type: String
@@ -27,7 +27,15 @@ const BlogSchema = new mongoose.Schema({
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
-    }]
+    }],
+    tags: [{
+        type: String,
+        trim: true
+    }],
+    featured: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Blog', BlogSchema);

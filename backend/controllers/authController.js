@@ -4,7 +4,7 @@ const { generateToken } = require('../utils/jwt');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
 
-// Controller for user registration
+// Register User
 exports.register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -25,18 +25,20 @@ exports.register = async (req, res) => {
     }
 };
 
-// Controller for user login
+// Login User
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
+
         if (!user || !(await comparePassword(password, user.password))) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        const token = generateToken({ id: user._id, role: user.role });
-        // Add user data to the response
-        res.status(200).json({ token, user }); 
+        // Fix: Pass full user object for token generation
+        const token = generateToken(user);
+
+        res.status(200).json({ token, user });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Login failed. Please try again.' });
@@ -48,12 +50,14 @@ exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(404).json({ error: 'If the email exists in our records, you will receive a password reset link.' });
         }
 
         const resetToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
         user.resetPasswordToken = hashedToken;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
         await user.save();
@@ -98,13 +102,16 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
-// Controller for user data retrieval (user and role)
+// Get User Data (Authenticated)
 exports.getUserData = async (req, res) => {
     try {
-      const user = await User.findById(req.user.id).select('-password'); // Exclude password
-      res.json({ user, role: req.user.role });
+        const user = await User.findById(req.user.id).select('-password'); // Exclude password
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ user, role: user.role });
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      res.status(500).json({ error: 'An error occurred while fetching user data' });
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ error: 'An error occurred while fetching user data' });
     }
-  };
+};

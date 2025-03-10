@@ -1,41 +1,53 @@
-import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import logo from "../assets/logo.png"; // Ensure logo is in the correct path
-import "../styles/Navbar.css"; // Import the CSS file
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import '../styles/Navbar.css'; // Create a CSS file for styling the Navbar component
 
 const Navbar = () => {
-    const { user } = useContext(AuthContext); // Removed logout from Navbar
+  const { user, logout } = useAuth();
 
-    return (
-        <nav className="navbar">
-            {/* Logo Section */}
-            <div className="logo-container">
-                <Link to="/">
-                    <img src={logo} alt="Logo" className="logo" />
-                </Link>
-            </div>
+  const handleLogout = () => {
+    logout();
+  };
 
-            {/* Navigation Links */}
-            <div className="link-container">
-                <Link to="/">Home</Link>
-                <Link to="/blogs">Blogs</Link>
-                <Link to="/about">About</Link>
-                <Link to="/contact">Contact Us</Link>
-
-                {!user ? (
-                    <>
-                        <Link to="/signup">Signup</Link>
-                        <Link to="/login">Login</Link>
-                    </>
-                ) : (
-                    <>
-                        <Link to="/user-dashboard">Dashboard</Link>
-                    </>
-                )}
-            </div>
-        </nav>
-    );
+  return (
+    <nav className="navbar">
+      <div className="nav-logo">
+        <Link to="/">
+          <img src="/src/assets/logo.png" alt="Logo" />
+        </Link>
+      </div>
+      <div className="navbar-links">
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/blogs">Blogs</Link>
+          </li>
+          {user ? (
+            <>
+              <li>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+              <li>
+                <Link to="/signup">Signup</Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

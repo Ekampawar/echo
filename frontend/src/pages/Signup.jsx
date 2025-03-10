@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance"; // Import the custom axios instance
-import "../styles/Form.css";
+import { axiosInstance } from "../utils/axiosInstance"; // Import the custom axios instance
+import "../styles/Form.css"; // Import the CSS file for styling the signup page
 
 const Signup = () => {
     const [formData, setFormData] = useState({

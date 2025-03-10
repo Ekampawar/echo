@@ -1,132 +1,98 @@
-/* General page layout */
-.min-h-screen {
-    min-height: 100vh;
-    background-color: #f3f4f6; /* Light gray background */
+/* General Styles */
+body {
+  font-family: 'Georgia', serif;
+  color: #333;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
 }
 
-/* Hero Section */
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero Section Styles */
 .hero-section {
-    background-color: purple; /* Purple background */
-    color: white;
-    padding: 4rem 2rem;
-    text-align: center;
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
 }
 
 .hero-section h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
+  font-size: 3em;
+  margin-bottom: 20px;
 }
 
 .hero-section p {
-    margin-top: 1.5rem;
-    font-size: 1.125rem;
+  font-size: 1.2em;
+  margin-bottom: 40px;
 }
 
-.hero-section-btn {
-    margin-top: 2rem;
+.hero-section-btn .btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.hero-section .btn {
-    padding: 0.75rem 1.7rem;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    text-decoration: none;
-    margin-top: 2rem;
-    transition: all 0.3s ease;
+.hero-section-btn .btn:hover {
+  background-color: #555;
 }
 
-.hero-section .get-started {
-    background-color: white;
-    color: purple; /* Purple text */
-    margin-right: 1rem;
-}
-
-.hero-section .get-started:hover {
-    background-color: purple;
-    color: white;
-}
-
-.hero-section .log-in {
-    border: 2px solid white;
-    color: white;
-}
-
-.hero-section .log-in:hover {
-    background-color: white;
-    color: purple; /* Purple text on hover */
-}
-
-/* Featured Blogs Section */
+/* Featured Blogs Section Styles */
 .featured-blogs {
-    margin-top: 4rem;
-    padding: 2rem;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
 }
 
 .featured-blogs h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: purple; /* Purple color for the heading */
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-.featured-blogs .blog-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+.blog-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .blog-card {
-    background-color: white;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.blog-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 10px;
+  width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .blog-card h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
 .blog-card p {
-    color: #4b5563;
-    margin-top: 0.5rem;
+  font-size: 1em;
+  margin-bottom: 20px;
 }
 
 .blog-card a {
-    color: purple; /* Purple text for links */
-    font-weight: 600;
-    display: block;
-    margin-top: 1rem;
-    text-decoration: none;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
 }
 
 .blog-card a:hover {
-    color: #5b21b6; /* Darker purple on hover */
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .hero-section h1 {
-        font-size: 2rem;
-    }
-
-    .hero-section p {
-        font-size: 1rem;
-    }
-
-    .hero-section {
-        padding: 2rem 1rem;
-    }
-
-    .featured-blogs {
-        padding: 1rem;
-    }
+  text-decoration: underline;
 }
