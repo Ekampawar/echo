@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import "../styles/home.css"; // Don't forget to import the CSS file
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   return (
     <div className="min-h-screen">
-
       {/* Hero Section */}
+      <Navbar/>
       <section className="hero-section">
         <h1>Welcome to Our Blog Platform</h1>
         <p>Read, write, and share amazing blog posts.</p>

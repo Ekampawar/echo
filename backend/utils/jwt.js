@@ -5,7 +5,7 @@ dotenv.config();
 
 exports.generateToken = (user) => {
     return jwt.sign(
-        { id: user._id, role: user.role },
+        { id: user._id.toString(), role: user.role }, // Fix: Ensure id is included
         process.env.JWT_SECRET,
         { expiresIn: '15d' }
     );
