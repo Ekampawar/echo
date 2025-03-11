@@ -1,15 +1,25 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // Import useAuth hook for accessing auth context
+import '../styles/Form.css'; // Import the CSS file for styling the login page
 
 const Login = () => {
   const { login, error, loading } = useAuth(); // Destructure login, error, and loading from context
   const [email, setEmail] = useState(''); // State for email
   const [password, setPassword] = useState(''); // State for password
+  const [localError, setLocalError] = useState(''); // State for local error handling
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password); // Call login function from AuthContext
+    setLocalError(''); // Reset local error state
+
+    try {
+      await login(email, password); // Call login function from AuthContext
+      console.log('Login successful'); // Log successful login
+    } catch (err) {
+      console.error('Login failed:', err); // Log error
+      setLocalError('Failed to login. Please check your credentials and try again.'); // Set local error message
+    }
   };
 
   return (
@@ -18,6 +28,7 @@ const Login = () => {
         <h2 className="form-title">Login</h2>
 
         {/* Display error message if any */}
+        {localError && <div className="error-message">{localError}</div>}
         {error && <div className="error-message">{error}</div>}
 
         <div className="form-group">

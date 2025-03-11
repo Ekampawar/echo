@@ -1,45 +1,27 @@
-import { Routes, Route } from 'react-router-dom';
-import Signup from './pages/Signup';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AuthProvider from './context/AuthProvider';
 import Login from './pages/Login';
-import UserDashboard from './pages/UserDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
-import ProtectedRoute from './components/ProtectedRoute';
-import Navbar from './components/Navbar';
-import { AuthProvider } from './context/AuthContext';
+import WriteBlog from './pages/WriteBlog';
+import EditBlog from './pages/EditBlog';
 
 function App() {
   return (
-    <AuthProvider>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/user-dashboard"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <UserDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin-dashboard"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/write" element={<WriteBlog />} />
+          <Route path="/edit/:id" element={<EditBlog />} />
+        </Routes>
+      </AuthProvider>
+    </Router>
   );
 }
 
