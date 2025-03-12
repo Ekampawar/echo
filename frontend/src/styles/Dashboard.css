@@ -2,14 +2,16 @@
 body {
   font-family: 'Georgia', serif;
   color: #333;
-  background-color: #f9f9f9;
+  background-color: white;
   margin: 0;
   padding: 0;
 }
 
 /* Dashboard Container */
 .dashboard-container {
-  display: flex;;
+  display: flex;
+  background-color: white;
+  height: 100vh;
 }
 
 /* Dashboard Content */
