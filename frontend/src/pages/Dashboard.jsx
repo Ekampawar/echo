@@ -36,7 +36,6 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <Sidebar setSelectedComponent={setSelectedComponent} />
       <div className="dashboard-content">
-        <h2>Welcome to the Dashboard</h2>
         {loading ? (
           <p>Loading user data...</p>
         ) : (

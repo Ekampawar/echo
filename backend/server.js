@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require('cors');
-const helmet = require('helmet'); // Security middleware
-const morgan = require('morgan'); // Logging middleware
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+// Routes
 const authRoutes = require('./routes/authRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const commentRoutes = require('./routes/commentRoutes');
@@ -15,18 +17,25 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(helmet()); // Adds security headers
-app.use(morgan('dev')); // Logs requests
+app.use(morgan('dev')); // Use a more advanced logging strategy in production
 
-// Dynamic CORS Configuration
-const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL];
+// Security Middleware (Helmet with some disabled headers)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    xssFilter: false,
+  })
+);
+
+// CORS Configuration
+const allowedOrigins = [process.env.FRONTEND_URL || "http://localhost:5173"];
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("CORS Policy Violation"));
       }
     },
     credentials: true,
@@ -42,30 +51,51 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/likes', likeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/uploads', express.static('uploads'));
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: "OK", message: "Server is running!" });
 });
 
+// Unified Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
-
-// MongoDB Connection
+// MongoDB Connection with Retry Logic
 const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB Connected');
-  } catch (error) {
-    console.error('MongoDB Connection Failed:', error);
-    process.exit(1); // Exit on failure
+  let attempts = 0;
+  const maxAttempts = 3;
+
+  while (attempts < maxAttempts) {
+    try {
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log('✅ MongoDB Connected');
+      break; // Exit loop on success
+    } catch (error) {
+      attempts++;
+      console.error(`🚨 MongoDB Connection Failed (Attempt ${attempts}):`, error);
+      if (attempts >= maxAttempts) process.exit(1);
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait before retrying
+    }
   }
 };
 
 connectDB();
 
+// Graceful Shutdown Logic (for production)
+process.on('SIGINT', async () => {
+  console.log('🔴 Gracefully shutting down...');
+  await mongoose.connection.close();  // Close DB connections
+  process.exit(0);  // Exit the process
+});
+
+// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

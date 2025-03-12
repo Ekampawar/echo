@@ -3,19 +3,25 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const { JWT_SECRET, JWT_EXPIRES_IN = '15d' } = process.env;
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+}
+
 exports.generateToken = (user) => {
     return jwt.sign(
-        { id: user._id.toString(), role: user.role }, // Fix: Ensure id is included
-        process.env.JWT_SECRET,
-        { expiresIn: '15d' }
+        { id: user._id.toString(), role: user.role },
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
     );
 };
 
 exports.verifyToken = (token) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, JWT_SECRET);
     } catch (error) {
-        console.error('Token verification error:', error);
-        throw new Error('Invalid or expired token');
+        console.error('Token verification error:', error.message);
+        return null; // Return null instead of throwing an error
     }
 };

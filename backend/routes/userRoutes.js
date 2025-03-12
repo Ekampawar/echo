@@ -5,9 +5,9 @@ const {
     updateUserProfile, 
     deleteUser, 
     changePassword, 
-    getAllUsers } = require('../controllers/userController');
+    } = require('../controllers/userController');
 const { authMiddleware } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/profileMiddleware');
 
 const router = express.Router();
 
