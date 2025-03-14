@@ -1,23 +1,249 @@
-/* src/styles/BlogPage.css */
-
-.blog-page {
-    margin: 20px auto;
-    max-width: 900px;
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
     font-family: 'Georgia', serif;
-}
-
-.blog-page h1 {
+    background-color: #ffffff;
+    color: #333;
+    line-height: 1.6;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h1 {
     font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #555;
+  }
+  
+  .editor-container {
+    background-color: #ffffff;
+    border: none;
+  }
+  
+  .editor-container .public-DraftEditor-content {
+    font-size: 1rem;
+    line-height: 1.8;
     color: #333;
     margin-bottom: 20px;
-}
+  }
+  
+  /* Blog Actions (Like & Share) */
+  .blog-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+  }
 
-.blog-page p {
+  .share-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .like-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+  }
+  
+  .liked {
+    color: rgb(0, 0, 0); /* Change color when liked */
+  }
+  
+  .liked-icon {
+    color: rgb(0, 0, 0); /* Change icon color */
+  }
+  
+  .like-count {
+    font-weight: bold;
+  }
+  
+  
+  .like-button:hover,
+  .share-button:hover {
+    background-color: #333;
+  }
+  
+  .share-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .share-buttons svg {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .share-buttons svg:hover {
+    transform: scale(1.1);
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  /* Comments Section */
+  .comments-section {
+    margin-top: 40px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .comments-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .comments-list {
+    margin-top: 20px;
+  }
+  
+  .comment-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
     line-height: 1.6;
-    color: #555;
+    border-left: 4px solid #ff6600; /* Accent color for comment borders */
+  }
+  
+  .comment-input {
+    margin-top: 20px;
+  }
+  
+  .comment-input textarea {
+    width: 100%;
+    height: 100px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     font-size: 1rem;
-}
+    margin-bottom: 10px;
+    resize: none;
+  }
+  
+  .comment-input button {
+    padding: 12px 25px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .comment-input button:hover {
+    background-color: #333;
+  }
 
-.blog-page .blog-content {
-    margin-top: 30px;
-}
+  .back-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #000000;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    text-decoration: underline;
+    color: #333;
+  }
+  
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 2rem;
+    }
+  
+    .like-button,
+    .share-button {
+      font-size: 1.1rem;
+      padding: 8px 16px;
+    }
+  
+    .share-buttons svg {
+      font-size: 1.2rem;
+    }
+  
+    .comment-input textarea {
+      font-size: 1rem;
+    }
+  
+    .comment-input button {
+      font-size: 1rem;
+      padding: 10px 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 10px;
+    }
+  
+    h1 {
+      font-size: 1.6rem;
+    }
+  
+    .like-button,
+    .share-button {
+      font-size: 1rem;
+      padding: 7px 12px;
+    }
+  
+    .share-buttons svg {
+      font-size: 1rem;
+    }
+  
+    .comment-input textarea {
+      font-size: 0.9rem;
+    }
+  
+    .comment-input button {
+      font-size: 0.9rem;
+      padding: 8px 15px;
+    }
+  }
+  

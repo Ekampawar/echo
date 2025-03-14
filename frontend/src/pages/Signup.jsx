@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { axiosInstance } from "../utils/axiosInstance"; // Import the custom axios instance
 import "../styles/Form.css"; // Import the CSS file for styling the signup page
 
@@ -14,12 +14,42 @@ const Signup = () => {
     const [isLoading, setIsLoading] = useState(false);  // For loading state
     const navigate = useNavigate();
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        return password.length >= 8; // You can add more password strength rules
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);  // Start loading
+        setIsLoading(true);
+        setError(null); // Reset error state
 
-        // Check if passwords match
-        if (formData.password !== formData.confirmPassword) {
+        const { username, email, password, confirmPassword } = formData;
+
+        // Basic validation
+        if (!username || !email || !password || !confirmPassword) {
+            setError("All fields are required.");
+            setIsLoading(false);
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setError("Please enter a valid email address.");
+            setIsLoading(false);
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            setError("Password must be at least 8 characters long.");
+            setIsLoading(false);
+            return;
+        }
+
+        if (password !== confirmPassword) {
             setError("Passwords do not match.");
             setIsLoading(false);
             return;
@@ -27,31 +57,18 @@ const Signup = () => {
 
         try {
             // Make the signup request using axiosInstance
-            const response = await axiosInstance.post("/auth/register", {
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
+            await axiosInstance.post("/auth/register", {
+                username: username.trim(),
+                email: email.trim(),
+                password: password.trim(),
             });
 
-            // On success, navigate to the login page or directly login
+            // On success, navigate to the login page
             navigate("/login");
-
         } catch (error) {
-            // Handle error and show message to the user
-            if (error.response) {
-                // Check for specific errors from the server
-                if (error.response.data.message.includes("Username")) {
-                    setError("This username is already taken.");
-                } else if (error.response.data.message.includes("Email")) {
-                    setError("This email is already registered.");
-                } else {
-                    setError(error.response.data.message || "An error occurred during signup.");
-                }
-            } else {
-                setError("An error occurred during signup.");
-            }
+            setError(error.response?.data?.message || "An error occurred during signup.");
         } finally {
-            setIsLoading(false);  // End loading
+            setIsLoading(false);
         }
     };
 
@@ -127,12 +144,16 @@ const Signup = () => {
                     />
                 </div>
 
-                <button type="submit" className="form-button" disabled={isLoading}>
+                <button 
+                    type="submit" 
+                    className="form-button" 
+                    disabled={isLoading || !formData.username || !formData.email || !formData.password || !formData.confirmPassword}
+                >
                     {isLoading ? "Signing Up..." : "Sign Up"}
                 </button>
 
                 <div className="form-link">
-                    <p>Already have an account? <a href="/login">Login</a></p>
+                    <p>Already have an account? <Link to="/login">Login</Link></p>
                 </div>
             </form>
         </div>

@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const Blog = require('../models/blog');
-const Comment = require('../models/comment');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {

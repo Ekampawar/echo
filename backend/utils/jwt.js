@@ -11,7 +11,7 @@ if (!JWT_SECRET) {
 
 exports.generateToken = (user) => {
     return jwt.sign(
-        { id: user._id.toString(), role: user.role },
+        { id: user._id, role: user.role }, // Use the ObjectId directly without converting it to string
         JWT_SECRET,
         { expiresIn: JWT_EXPIRES_IN }
     );

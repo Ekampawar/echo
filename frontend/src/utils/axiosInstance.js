@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Fetch the API URL from the environment variables (assuming VITE_API_URL is set)
+// Fetch the API URL from environment variables (assuming VITE_API_URL is set)
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // Create an instance of axios with default configuration
@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 // Request Interceptor to add the authorization token if it exists
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Fetch token from localStorage (if available)
+    const token = localStorage.getItem("token"); // Fetch token from localStorage
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // Attach token to headers
     }
@@ -31,16 +31,19 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response, // Return response directly if successful
   (error) => {
+    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred.';
+    console.error("API Error:", errorMessage); // Log error message
+
     if (error.response) {
-      console.error("API Error:", error.response.data); // Log error response
-      // Handle token expiration (401 error)
       if (error.response.status === 401) {
         console.warn("Token expired or unauthorized. Logging out...");
         localStorage.removeItem("token"); // Remove token from localStorage
         window.location.href = "/login"; // Redirect to login page
+      } else if (error.response.status === 500) {
+        console.error("Server error, please try again later.");
+      } else if (error.response.status === 403) {
+        console.error("Forbidden access, please check your permissions.");
       }
-    } else {
-      console.error("Network/Server Error:", error.message); // Log network/server errors
     }
     return Promise.reject(error); // Reject the promise with the error
   }
@@ -48,47 +51,61 @@ axiosInstance.interceptors.response.use(
 
 // Centralized API functions for making requests
 const api = {
-  // Get user profile by user ID
-  getUserProfile: (userId) => axiosInstance.get(`/users/${userId}`),
-
-  // Create a new blog post
-  createBlog: (blogData) => axiosInstance.post("/blogs", blogData),
-
-  // Update a specific blog post
-  updateBlog: (blogId, blogData) => axiosInstance.put(`/blogs/${blogId}`, blogData),
-
-  // Get a specific blog post by blog ID
-  getBlogById: (blogId) => axiosInstance.get(`/blogs/${blogId}`),
-
-  // Get a list of all blogs
-  getBlogs: () => axiosInstance.get("/blogs"),
-
-  // Delete a specific blog post by blog ID
-  deleteBlog: (blogId) => axiosInstance.delete(`/blogs/${blogId}`),
-
-  // Get all comments
-  getComments: () => axiosInstance.get("/comments"),
-
-  // Delete a specific comment by comment ID
-  deleteComment: (commentId) => axiosInstance.delete(`/comments/${commentId}`),
-
-  // Get all users (Admin)
-  getUsers: () => axiosInstance.get("/admin/users"),
-
-  // Delete a specific user by user ID (Admin)
-  deleteUser: (userId) => axiosInstance.delete(`/users/${userId}`),
-
-  // Get current authenticated user details
+  // Auth API
+  login: (email, password) => axiosInstance.post("/auth/login", { email, password }),
+  signup: (username, email, password) => axiosInstance.post("/auth/register", { username, email, password }),
+  forgotPassword: (email) => axiosInstance.post("/auth/forgot-password", { email }),
+  resetPassword: (token, newPassword) => axiosInstance.post(`/auth/reset-password/${token}`, { newPassword }),
   getCurrentUser: () => axiosInstance.get("/auth/user"),
 
-  // Get blogs of a specific user by user ID
-  getUserBlogs: (userId) => axiosInstance.get(`/blogs/user/${userId}`),
+  // User API
+  getUserProfile: () => axiosInstance.get("/users/profile"),
+  updateUserProfile: (profileData) => {
+    const formData = new FormData();
+    formData.append('username', profileData.username);
+    formData.append('email', profileData.email);
 
-  // Get comments made by a specific user by user ID
-  getUserComments: (userId) => axiosInstance.get(`/users/${userId}/comments`),
+    if (profileData.profilePic) {
+      formData.append('profilePhoto', profileData.profilePic); // Only append profilePhoto if it's available
+    }
 
-  // Get blog by slug (for dynamic routing, if slug is used)
+    return axiosInstance.put("/users/profile", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Content type for file upload
+      },
+    });
+  },
+  changePassword: (newPassword) => axiosInstance.put("/users/profile/change-password", { newPassword }),
+  deleteUser: () => axiosInstance.delete("/users/profile"),
+
+  // Admin API
+  getAllUsers: () => axiosInstance.get("/admin/users"),
+  deleteUserById: (userId) => axiosInstance.delete(`/admin/user/${userId}`),
+  updateUserRole: (userId, role) => axiosInstance.put(`/admin/user/${userId}/role`, { role }),
+  banUser: (userId) => axiosInstance.put(`/admin/user/${userId}/ban`),
+
+  // Blog API
+  createBlog: (blogData) => axiosInstance.post("/blogs", blogData),
+  getBlogs: () => axiosInstance.get("/blogs"),
+  getBlogById: (blogId) => axiosInstance.get(`/blogs/${blogId}`),
+  updateBlog: (blogId, blogData) => axiosInstance.put(`/blogs/${blogId}`, blogData),
+  deleteBlog: (blogId) => axiosInstance.delete(`/blogs/${blogId}`),
+  likeBlog: (blogId) => axiosInstance.post(`/blogs/${blogId}/like`), // Merged like functionality
+  getBlogsByTag: (tag) => axiosInstance.get(`/blogs/tags/${tag}`),
+
+  // Comment API (Merging with Blog functionality)
+  addCommentToBlog: (blogId, commentData) => axiosInstance.post(`/blogs/${blogId}/comments`, commentData), // Added comments inside blog routes
+  getCommentsByBlogId: (blogId) => axiosInstance.get(`/blogs/${blogId}/comments`), // Get comments from the same blog endpoint
+  deleteComment: (commentId) => axiosInstance.delete(`/blogs/comments/${commentId}`), // Assuming it's merged within blog
+
+  // Blog Views API (Increment views)
+  viewBlog: (slug) => axiosInstance.get(`/blogs/view/${slug}`),
+
+  // Get blog by slug (dynamic routing)
   getBlogBySlug: (slug) => axiosInstance.get(`/blogs/slug/${slug}`),
+
+  // Get Stats API
+  getStats: () => axiosInstance.get('/stats'), // Fetch statistics (total blogs, likes, views, top blogs)
 };
 
 export { axiosInstance, api };

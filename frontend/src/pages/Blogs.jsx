@@ -1,8 +1,6 @@
-// src/pages/Blogs.jsx
-
 import React, { useState, useEffect } from 'react';
-import { api } from "../utils/axiosInstance"; 
-import { Link } from 'react-router-dom';  // Using Link for navigation
+import { api } from "../utils/axiosInstance"; // Importing the api object
+import { Link } from 'react-router-dom';
 import { convertFromRaw } from 'draft-js';
 import Navbar from "../components/Navbar";
 import "../styles/Blogs.css";
@@ -15,11 +13,11 @@ const Blogs = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await api.getBlogs();
+                const response = await api.getBlogs(); // Using the correct API function
                 setBlogs(response.data.data);  // Set blogs data
                 setLoading(false);
             } catch (err) {
-                setError('Failed to load blogs');
+                setError('Failed to load blogs. Please try again later.');
                 setLoading(false);
             }
         };
@@ -37,7 +35,7 @@ const Blogs = () => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="loading-spinner">Loading...</div>; // Optionally replace with a spinner
     if (error) return <p>{error}</p>;
 
     return (
@@ -46,15 +44,17 @@ const Blogs = () => {
             {blogs.length === 0 ? (
                 <p>No blogs available.</p>
             ) : (
-                blogs.map((blog) => (
-                    <div key={blog._id} className="blog-card">
-                        <h2>{blog.title}</h2>
-                        <p>{renderBlogContent(blog.content)}</p>
-                        <Link to={`/blogs/${blog.slug}`} className="read-more">
-                            Read more...
-                        </Link>
-                    </div>
-                ))
+                <div className="blog-list">
+                    {blogs.map((blog) => (
+                        <div key={blog._id} className="blog-card">
+                            <h2>{blog.title}</h2>
+                            <p>{renderBlogContent(blog.content)}</p>
+                            <Link to={`/blogs/${blog.slug}`} className="read-more">
+                                Read more...
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );
