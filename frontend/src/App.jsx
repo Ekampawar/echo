@@ -8,7 +8,7 @@ import Home from './pages/Home';
 import WriteBlog from './pages/WriteBlog';
 import EditBlog from './pages/EditBlog';
 import Blogs from './pages/Blogs';
-import BlogPage from './pages/BlogPage'; 
+import BlogPage from './components/BlogPage'; 
 import PrivateRoute from './context/PrivateRoute';  // Import PrivateRoute
 
 function App() {

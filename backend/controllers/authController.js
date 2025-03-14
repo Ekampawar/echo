@@ -105,7 +105,8 @@ exports.resetPassword = async (req, res) => {
 // Get User Data (Authenticated)
 exports.getUserData = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password'); // Exclude password
+        console.log("Authenticated user from middleware:", req.user);  // Log the user data
+        const user = await User.findById(req.user._id).select('-password'); // Exclude password
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }

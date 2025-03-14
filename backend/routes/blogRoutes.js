@@ -6,7 +6,11 @@ const {
   updateBlog, 
   deleteBlog, 
   getBlogsByUser,
-  getBlogBySlug
+  getBlogBySlug,
+  addComment,
+  getCommentsByBlog,
+  toggleLike,
+  getLikesByBlog
 } = require('../controllers/blogController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { body, param } = require('express-validator');
@@ -39,6 +43,19 @@ router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid 
 // Delete a blog (authentication required)
 router.delete('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), deleteBlog);
 
+// Get a blog by its slug (no authentication needed)
 router.get('/slug/:slug', getBlogBySlug);
+
+// Add a comment to a blog (authentication required)
+router.post('/:blogId/comments', authMiddleware, addComment);
+
+// Get comments for a blog
+router.get('/:blogId/comments', getCommentsByBlog);
+
+// Toggle like (authentication required)
+router.post('/:blogId/like', authMiddleware, toggleLike);
+
+// Get likes for a blog
+router.get('/:blogId/likes', getLikesByBlog);
 
 module.exports = router;

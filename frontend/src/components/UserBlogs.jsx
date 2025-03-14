@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 import '../styles/UserBlogs.css';
 
 const UserBlogs = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

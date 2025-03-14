@@ -1,29 +1,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const winston = require('winston'); // Consider using a better logging strategy
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
-const blogRoutes = require('./routes/blogRoutes');
-const commentRoutes = require('./routes/commentRoutes');
-const likeRoutes = require('./routes/likeRoutes');
+const blogRoutes = require('./routes/blogRoutes'); // Combined blog, comment, and like routes
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const statsRouter = require('./routes/statsRoutes');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(morgan('dev')); // Use a more advanced logging strategy in production
+app.use(morgan('dev')); // Consider using Winston or Pino for production logging
 
 // Security Middleware (Helmet with some disabled headers)
 app.use(
   helmet({
-    contentSecurityPolicy: false,
-    xssFilter: false,
+    contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], imgSrc: ["'self'", 'data:'] } },  // Use a more restrictive policy for security
+    xssFilter: true,  // Enable XSS Filter for additional protection
   })
 );
 
@@ -44,13 +45,14 @@ app.use(
   })
 );
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/blogs', blogRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/likes', likeRoutes);
+app.use('/api/blogs', blogRoutes); // Blog routes now handle blog, comments, and likes
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', statsRouter);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
@@ -63,7 +65,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-// MongoDB Connection with Retry Logic
+// MongoDB Connection with Retry Logic and Specific Error Handling
 const connectDB = async () => {
   let attempts = 0;
   const maxAttempts = 3;
@@ -78,8 +80,11 @@ const connectDB = async () => {
       break; // Exit loop on success
     } catch (error) {
       attempts++;
-      console.error(`🚨 MongoDB Connection Failed (Attempt ${attempts}):`, error);
-      if (attempts >= maxAttempts) process.exit(1);
+      console.error(`🚨 MongoDB Connection Failed (Attempt ${attempts}):`, error.message);
+      if (attempts >= maxAttempts) {
+        console.error("🚨 Max connection attempts reached. Exiting...");
+        process.exit(1);
+      }
       await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait before retrying
     }
   }
@@ -87,10 +92,15 @@ const connectDB = async () => {
 
 connectDB();
 
-// Graceful Shutdown Logic (for production)
+// Graceful Shutdown Logic with Timeout (for production)
 process.on('SIGINT', async () => {
   console.log('🔴 Gracefully shutting down...');
-  await mongoose.connection.close();  // Close DB connections
+  try {
+    await mongoose.connection.close();  // Close DB connections
+    console.log('✅ MongoDB connection closed');
+  } catch (err) {
+    console.error('🚨 Error closing MongoDB connection:', err);
+  }
   process.exit(0);  // Exit the process
 });
 

@@ -1,51 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import { useAuth } from '../context/AuthContext'; // Import useAuth hook for accessing auth context
-import '../styles/Form.css'; // Import the CSS file for styling the login page
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import "../styles/Form.css";
+import ErrorModal from "../components/ErrorModel"; 
 
 const Login = () => {
-  const { login, error, loading, userData } = useAuth(); // Destructure login, error, and loading from context
-  const [email, setEmail] = useState(''); // State for email
-  const [password, setPassword] = useState(''); // State for password
-  const [localError, setLocalError] = useState(''); // State for local error handling
-  const navigate = useNavigate(); // Initialize useNavigate hook for redirection
+  const { login, error, loading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [localError, setLocalError] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false); // State to control modal visibility
 
-  // Redirect to dashboard if already logged in
-  useEffect(() => {
-    if (userData) {
-      navigate('/dashboard'); // Redirect to the dashboard page if user is already logged in
-    }
-  }, [userData, navigate]);
-
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLocalError(''); // Reset local error state
+    setLocalError(""); // Reset local error on submit
 
-    // Basic form validation
     if (!email || !password) {
-      setLocalError('Please enter both email and password.');
-      return;
-    }
-
-    // Simple email validation regex
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      setLocalError('Please enter a valid email address.');
+      setLocalError("Please enter both email and password.");
+      setShowErrorModal(true);
       return;
     }
 
     try {
-      await login(email, password); // Call login function from AuthContext
-      console.log('Login successful');
-      
-      // Redirect to the dashboard after a successful login
-      navigate('/dashboard'); // This will redirect the user to the dashboard page
-
+      await login(email, password); // Assuming login function handles API call
     } catch (err) {
-      console.error('Login failed:', err);
-      setLocalError('Failed to login. Please check your credentials and try again.');
+      setLocalError("Failed to log in. Please check your credentials.");
+      setShowErrorModal(true); // Show the error modal
     }
+  };
+
+  // Close the error modal
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setLocalError(""); // Clear the error message when modal is closed
   };
 
   return (
@@ -53,15 +39,10 @@ const Login = () => {
       <form onSubmit={handleSubmit} className="form-wrapper">
         <h2 className="form-title">Login</h2>
 
-        {/* Display error message if any */}
-        {(localError || error) && (
-          <div className="error-message">
-            {localError || error}
-          </div>
-        )}
-
         <div className="form-group">
-          <label htmlFor="email" className="form-label">Email Address</label>
+          <label htmlFor="email" className="form-label">
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
@@ -70,12 +51,14 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            autoComplete="email"
+            disabled={loading}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="password" className="form-label">Password</label>
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
           <input
             type="password"
             id="password"
@@ -84,23 +67,28 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            autoComplete="current-password"
+            disabled={loading}
           />
         </div>
 
-        <button
-          type="submit"
-          className="form-button"
-          disabled={loading || !email || !password}
-        >
-          {loading ? 'Logging In...' : 'Login'}
+        <button type="submit" className="form-button" disabled={loading}>
+          {loading ? "Logging In..." : "Login"}
         </button>
 
         <div className="form-link">
-          <p>Don't have an account? <a href="/signup">Sign up</a></p>
-          <p><a href="/forgot-password">Forgot Password?</a></p>
+          <p>
+            Don't have an account? <a href="/signup">Sign up</a>
+          </p>
+          <p>
+            <a href="/forgot-password">Forgot Password?</a>
+          </p>
         </div>
       </form>
+
+      {/* Conditionally render the ErrorModal */}
+      {showErrorModal && (
+        <ErrorModal message={localError || error} onClose={closeErrorModal} />
+      )}
     </div>
   );
 };
