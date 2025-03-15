@@ -116,12 +116,18 @@ const api = {
   // Blog Views API (Increment views)
   viewBlog: (slug) => axiosInstance.get(`/blogs/view/${slug}`),
 
-  // Get blog by slug (dynamic routing)
+  // blog by slug (dynamic routing)
   getBlogBySlug: (slug) => axiosInstance.get(`/blogs/slug/${slug}`),
 
-  // Get Stats API
+  // Stats API
   getAdminStats: () => axiosInstance.get("/stats/admin"),
   getUserStats: (userId) => axiosInstance.get(`/stats/user/${userId}`),
+
+  // Notification API
+  getNotifications: (userId) => axiosInstance.get(`/notifications/${userId}`), // Fetch notifications for a user
+  markNotificationAsRead: (notificationId) => axiosInstance.put(`/notifications/${notificationId}/read`), // Mark a notification as read
+  likeNotification: (userId, blogId) => axiosInstance.post(`/notifications/like`, { userId, blogId }), // Like notification
+  commentNotification: (userId, blogId, commentText) => axiosInstance.post(`/notifications/comment`, { userId, blogId, commentText }), // Comment notification
 };
 
 export { axiosInstance, api };

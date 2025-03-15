@@ -69,7 +69,7 @@ const Sidebar = ({ setSelectedComponent }) => {
             </>
           ) : (
             <li>
-              <span className="sidebar-link" onClick={() => setSelectedComponent('userComments')}>
+              <span className="sidebar-link" onClick={() => setSelectedComponent('notifications')}>
                 Notifications
               </span>
             </li>

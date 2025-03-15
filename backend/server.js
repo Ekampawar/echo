@@ -13,6 +13,7 @@ const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const statsRoutes = require("./routes/statsRoutes");
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/api/blogs', blogRoutes); // Blog routes now handle blog, comments, and
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use("/api/stats", statsRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {

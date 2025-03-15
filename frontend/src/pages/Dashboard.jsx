@@ -5,6 +5,8 @@ import { api } from "../utils/axiosInstance";
 import "../styles/Dashboard.css";
 import Sidebar from "../components/Sidebar";
 import UserBlogs from "../components/UserBlogs";
+import Notification from "../components/Notifications";
+import AccountSettings from "./AccountSettings"; // Import AccountSettings
 
 const Dashboard = () => {
   const { user, loading, error } = useAuth();
@@ -90,6 +92,8 @@ const Dashboard = () => {
       </div>
     ),
     userBlogs: <UserBlogs />,
+    notifications: <Notification />,
+    accountSettings: <AccountSettings setSelectedComponent={setSelectedComponent} />, // Pass setSelectedComponent here
   };
 
   if (loading || loadingStats) return <div className="loading-message">Loading...</div>;
@@ -98,7 +102,9 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <Sidebar setSelectedComponent={setSelectedComponent} />
-      <div className="dashboard-content">{components[selectedComponent] || components.dashboard}</div>
+      <div className="dashboard-content">
+        {components[selectedComponent] || components.dashboard} {/* Dynamically render the selected component */}
+      </div>
     </div>
   );
 };
