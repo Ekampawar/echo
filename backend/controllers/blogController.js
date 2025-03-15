@@ -102,9 +102,26 @@ exports.deleteBlog = async (req, res) => {
 // Get blogs by a specific user
 exports.getBlogsByUser = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.params.userId }).populate('author', 'name email');
+    // Check if userId is valid
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Find blogs by user ID
+    const blogs = await Blog.find({ author: userId })
+      .populate('author', 'name email')  // Assuming 'author' is a reference to the User model
+
+    // If no blogs found
+    if (blogs.length === 0) {
+      return res.status(404).json({ message: 'No blogs found for this user' });
+    }
+
+    // Return blogs data
     res.status(200).json({ data: blogs });
   } catch (err) {
+    // Enhanced error logging in development mode for better debugging
+    console.error(err);
     res.status(500).json({ message: 'Error fetching blogs by user', error: err.message });
   }
 };
@@ -155,14 +172,13 @@ exports.toggleLike = async (req, res) => {
     const blog = await Blog.findById(blogId);
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
 
-    // Check if user has already liked the blog
-    const hasLiked = blog.likes.includes(userId);
+    const likeIndex = blog.likes.indexOf(userId);
 
-    if (hasLiked) {
-      // Unlike (remove user ID from the array)
-      blog.likes = blog.likes.filter(id => id !== userId);
+    if (likeIndex > -1) {
+      // Unlike (remove user from array)
+      blog.likes.splice(likeIndex, 1);
     } else {
-      // Like (add user ID to the array)
+      // Like (add user ID)
       blog.likes.push(userId);
     }
 
@@ -172,6 +188,7 @@ exports.toggleLike = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
 
 
 // Get likes for a blog

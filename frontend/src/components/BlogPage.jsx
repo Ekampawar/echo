@@ -36,12 +36,9 @@ const BlogPage = () => {
           console.log('Likes data:', blogData.likes); // Log likes data
   
           // Count the likes based on the keys in the likes object
-          const likes = blogData.likes || {};
-          setLikeCount(Object.keys(likes).length); // Count how many users have liked
-  
-          // Check if the current user has liked the blog
-          const currentUserId = localStorage.getItem('userId');
-          setLiked(likes[currentUserId] === true); // Set liked to true if the current user has liked
+          const likes = Array.isArray(blogData.likes) ? blogData.likes : [];
+          setLikeCount(likes.length);
+          setLiked(likes.includes(currentUserId)); // Check if the current user has liked the blog
         }
   
         setLoading(false);
