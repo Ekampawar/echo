@@ -1,0 +1,76 @@
+  /* Back arrow styles */
+  .back-arrow {
+    font-size: 1.25rem;
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .back-arrow:hover {
+    color: #333;
+  }
+  
+  .settings-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .settings-header h3 {
+    margin: 0;
+  }
+
+
+  /* edit profile page */
+
+  .edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 60vh;
+    justify-content:center;
+  }
+
+  .edit-profile-form .form-group {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+  }
+
+  .edit-profile-form .form-group label {
+    font-size: 1rem;
+  }
+
+  .edit-profile-form .form-group input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+  }
+
+  .edit-profile-form button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .edit-profile-form button:hover {
+    background-color: #333;
+  }
+
+  /* Responsive Design for smaller screens */
+  @media (max-width: 600px) {
+    .account-settings {
+      padding: 15px;
+    }
+  
+    .settings-link li a {
+      font-size: 1rem;
+    }
+  }  

@@ -1,119 +1,131 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/axiosInstance';
 import BlogLayout from '../components/BlogLayout';
+import { Editor, EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import TextToolbar from '../components/TextToolbar';
+import ErrorModal from '../components/ErrorModal';
+import TagInput from '../components/TagInput';
 import "../styles/BlogForm.css";
 
 const EditBlog = () => {
-  const { blogId } = useParams();
+  const { blogId } = useParams(); // Extract blogId from URL
   const navigate = useNavigate();
+  const { user } = useAuth();
 
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  console.log("Editing Blog ID:", blogId); // Debugging log
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await api.getBlog(blogId);
-        const { title, content, image, tags } = response.data;
-        setTitle(title);
-        setContent(content);
-        setImage(image); // Assuming image URL is provided
-        setTags(tags || []);
-        if (image) setImagePreview(image); // Set preview if image is already present
+        console.log(`Fetching blog data for ID: ${blogId}...`);
+        
+        const response = await api.getBlogById(blogId); 
+        console.log("API Response:", response);
+    
+        // Extract the correct data
+        const blogData = response.data?.data || response.data;  
+        console.log("Extracted Blog Data:", blogData);
+    
+        if (!blogData || !blogData._id) {
+          console.error("Blog data is missing or invalid:", blogData);
+          setError("Invalid blog data received.");
+          return;
+        }
+    
+        setTitle(blogData.title || "");
+        setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(blogData.content))));
+        setTags(blogData.tags || []);
+    
       } catch (err) {
-        setError('Failed to fetch blog data.');
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch blog data:", err);
+        setError("Failed to fetch blog data.");
       }
-    };
-
+    };    
     fetchBlog();
   }, [blogId]);
 
   const handleUpdate = async () => {
-    setError('');
-    setSuccess('');
-
-    if (!title.trim() || !content.trim()) {
-      setError('Title and content cannot be empty.');
+    if (!title.trim()) {
+      setError('Title cannot be empty.');
+      setShowErrorModal(true);
       return;
     }
 
-    setLoading(true); // Show loading state
+    const content = convertToRaw(editorState.getCurrentContent());
+
+    const hasText = content.blocks.some(block => block.text.trim() !== '');
+    if (!hasText) {
+      setError('Content cannot be empty.');
+      setShowErrorModal(true);
+      return;
+    }
+
+    if (loading) return; // Prevent multiple submissions
+    setLoading(true);
+    setError('');
+
+    const updatedBlogData = {
+      title,
+      content: JSON.stringify(content),
+      author: user?._id, 
+      tags,
+    };
+
+    console.log('Updated Blog Data:', updatedBlogData);
 
     try {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
-      formData.append('tags', tags.join(','));
-      if (image && typeof image !== 'string') formData.append('image', image); // If image is updated
-
-      await api.updateBlog(blogId, formData);
-      setSuccess('Blog updated successfully.');
-      setTimeout(() => navigate('/blogs'), 2000);
+      await api.updateBlog(blogId, updatedBlogData);
+      setLoading(false);
+      navigate('/blogs');
     } catch (err) {
-      setError('Failed to update blog. Please try again.');
-    } finally {
-      setLoading(false); // Hide loading state
+      console.error('Failed to update blog:', err);
+      setError('Failed to update blog.');
+      setShowErrorModal(true);
+      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-
   const sidebarContent = (
     <div className="sidebar-controls">
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
-
-      <button onClick={handleUpdate} className="submit-button" disabled={loading}>
-        {loading ? 'Updating...' : 'Update'}
-      </button>
-      
-      <label>Upload Image</label>
-      <input
-        type="file"
-        onChange={(e) => {
-          const file = e.target.files[0];
-          setImage(file);
-          setImagePreview(URL.createObjectURL(file)); // Preview the selected image
-        }}
-      />
-      {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
-      
-      <label>Tags</label>
-      <input
-        type="text"
-        value={tags.join(', ')}
-        placeholder="Comma-separated tags"
-        onChange={(e) => setTags(e.target.value.split(',').map(tag => tag.trim()))}
-      />
+      <div className='sidebar-header'>
+        <button onClick={handleUpdate} className="publish-button" disabled={loading}>
+          {loading ? 'Updating...' : 'Update Blog'}
+        </button>
+      </div>
+      <div className='sidebar-body'>
+        <label>Tags</label>
+        <TagInput tags={tags} setTags={setTags} />
+      </div>
     </div>
   );
 
+  if (error) {
+    return <ErrorModal message={error} onClose={() => setShowErrorModal(false)} />;
+  }
+
   return (
-    <BlogLayout title="Edit Blog" sidebarContent={sidebarContent}>
+    <BlogLayout sidebarContent={sidebarContent}>
       <div className="blog-editor">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="blog-title-input"
-          placeholder="Edit blog title"
+          placeholder="Title"
         />
-        
-        <textarea
-          className="blog-content-input"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Update your blog content..."
-        />
+        <TextToolbar editorState={editorState} setEditorState={setEditorState} />
+        <div className="editor-container">
+          <Editor editorState={editorState} onChange={setEditorState} placeholder="Edit your content..." />
+        </div>
       </div>
     </BlogLayout>
   );

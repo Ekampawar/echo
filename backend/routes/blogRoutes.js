@@ -41,7 +41,7 @@ router.get('/user/:userId', authMiddleware, param('userId').isMongoId().withMess
 router.post('/', authMiddleware, createUpdateBlogValidation, createBlog);
 
 // Update a blog (authentication required)
-router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), createUpdateBlogValidation, updateBlog);
+router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), updateBlog);
 
 // Delete a blog (authentication required)
 router.delete('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), deleteBlog);

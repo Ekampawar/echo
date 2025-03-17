@@ -10,26 +10,24 @@ const UserBlogs = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deleting, setDeleting] = useState(false); // For handling delete loading
+  const [deletingBlogId, setDeletingBlogId] = useState(null); // Track specific blog deletion
 
   useEffect(() => {
     if (!user?._id) {
-      navigate('/login'); // Redirect to login if user is not authenticated
+      navigate('/login'); 
       return;
     }
 
     const fetchUserBlogs = async () => {
       try {
         const response = await api.getUserBlogs(user._id);
-        console.log("Response data:", response.data); // Log response for debugging
-        if (Array.isArray(response.data.data)) {  // Accessing 'data' property inside the response
+        if (Array.isArray(response.data?.data)) {
           setBlogs(response.data.data);
         } else {
-          console.error('Unexpected response structure:', response.data);
-          setError('Invalid data format received');
-        }        
+          setError('Invalid data format received.');
+        }
       } catch (err) {
-        setError('Failed to fetch blogs.');
+        setError(err.response?.data?.message || 'Failed to fetch blogs.');
       } finally {
         setLoading(false);
       }
@@ -42,24 +40,24 @@ const UserBlogs = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
     if (!confirmDelete) return;
 
-    setDeleting(true); // Set deleting state to true
+    setDeletingBlogId(blogId);
 
     try {
       await api.deleteBlog(blogId);
       setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog._id !== blogId));
     } catch (err) {
-      setError('Failed to delete blog.');
+      setError(err.response?.data?.message || 'Failed to delete blog.');
     } finally {
-      setDeleting(false); // Reset deleting state
+      setDeletingBlogId(null);
     }
   };
 
   const handleWriteBlog = () => {
-    navigate('/write'); // Navigate to the create blog page
+    navigate('/write');
   };
 
   if (loading) return <p>Loading blogs...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="user-blogs-container">
@@ -67,7 +65,7 @@ const UserBlogs = () => {
       {blogs.length === 0 ? (
         <div>
           <p className="no-blogs-message">You haven't written any blogs yet.</p>
-          <button className="write-blog-button" onClick={handleWriteBlog}>Write a Blog</button> {/* Button to navigate to blog creation */}
+          <button className="write-blog-button" onClick={handleWriteBlog}>Write a Blog</button>
         </div>
       ) : (
         <table className="blogs-table">
@@ -88,9 +86,9 @@ const UserBlogs = () => {
                   <button
                     className="delete-button"
                     onClick={() => handleDelete(blog._id)}
-                    disabled={deleting}
+                    disabled={deletingBlogId === blog._id}
                   >
-                    {deleting ? "Deleting..." : "Delete"}
+                    {deletingBlogId === blog._id ? "Deleting..." : "Delete"}
                   </button>
                 </td>
               </tr>

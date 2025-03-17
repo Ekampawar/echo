@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Form.css";
-import ErrorModal from "../components/ErrorModel"; 
+import ErrorModal from "../components/ErrorModal"; 
 
 const Login = () => {
   const { login, error, loading } = useAuth();

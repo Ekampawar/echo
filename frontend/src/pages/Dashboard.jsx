@@ -6,7 +6,11 @@ import "../styles/Dashboard.css";
 import Sidebar from "../components/Sidebar";
 import UserBlogs from "../components/UserBlogs";
 import Notification from "../components/Notifications";
-import AccountSettings from "./AccountSettings"; // Import AccountSettings
+import AccountSettings from "./AccountSettings";
+import EditProfile from "./EditProfile";
+import PasswordSettings from "./PasswordSettings";
+import NotificationSettings from "./NotificationSettings";
+import LegalTerms from "./LegalTerms";
 
 const Dashboard = () => {
   const { user, loading, error } = useAuth();
@@ -16,12 +20,12 @@ const Dashboard = () => {
     totalLikes: 0,
     totalViews: 0,
     totalBlogs: 0,
-    totalUsers: 0, // Admin only
+    totalUsers: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (selectedComponent === "dashboard" && stats.totalBlogs === 0) {
+    if (selectedComponent === "dashboard") {
       const fetchStats = async () => {
         try {
           setLoadingStats(true);
@@ -32,7 +36,7 @@ const Dashboard = () => {
               totalLikes: response.data.totalLikes || 0,
               totalViews: response.data.totalViews || 0,
               totalBlogs: response.data.totalBlogs || 0,
-              totalUsers: response.data.totalUsers || 0, // Admin stat
+              totalUsers: response.data.totalUsers || 0,
             });
           } else {
             const response = await api.getUserStats(user._id);
@@ -51,9 +55,8 @@ const Dashboard = () => {
       };
       fetchStats();
     }
-  }, [selectedComponent, stats.totalBlogs, user]);
+  }, [selectedComponent, user]);
 
-  // Define components for sidebar navigation
   const components = {
     dashboard: (
       <div className="dashboard-grid">
@@ -75,27 +78,16 @@ const Dashboard = () => {
           <h3>Total Views</h3>
           <p>{stats.totalViews}</p>
         </div>
-        <div className="dashboard-card top-blogs">
-          <h3>Top Blogs</h3>
-          <ul>
-            {stats.topBlogs.length > 0 ? (
-              stats.topBlogs.map((blog, index) => (
-                <li key={index}>
-                  <strong>{blog.title || "Untitled"}</strong> - {blog.likes || 0} likes, {blog.views || 0} views
-                </li>
-              ))
-            ) : (
-              <li>No blogs available</li>
-            )}
-          </ul>
-        </div>
       </div>
     ),
     userBlogs: <UserBlogs />,
     notifications: <Notification />,
-    accountSettings: <AccountSettings setSelectedComponent={setSelectedComponent} />, // Pass setSelectedComponent here
-  };
-
+    accountSettings: <AccountSettings setSelectedComponent={setSelectedComponent} />,
+    profileSettings: <EditProfile setSelectedComponent={setSelectedComponent} />,
+    passwordSettings: <PasswordSettings setSelectedComponent={setSelectedComponent} />,
+    notificationSettings: <NotificationSettings setSelectedComponent={setSelectedComponent} />,
+    legalTerms: <LegalTerms setSelectedComponent={setSelectedComponent} />,
+  };  
   if (loading || loadingStats) return <div className="loading-message">Loading...</div>;
   if (error || !user) return <Navigate to="/login" />;
 
@@ -103,7 +95,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <Sidebar setSelectedComponent={setSelectedComponent} />
       <div className="dashboard-content">
-        {components[selectedComponent] || components.dashboard} {/* Dynamically render the selected component */}
+        {components[selectedComponent] || components.dashboard}
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ function App() {
           {/* Private Pages */}
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/write" element={<PrivateRoute><WriteBlog /></PrivateRoute>} />
-          <Route path="/edit/:id" element={<PrivateRoute><EditBlog /></PrivateRoute>} />
+          <Route path="/edit/:blogId" element={<PrivateRoute><EditBlog /></PrivateRoute>} />
           
           {/* Account Settings Pages */}
           <Route path="/settings" element={<PrivateRoute><AccountSettings /></PrivateRoute>} />

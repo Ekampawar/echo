@@ -1,0 +1,32 @@
+/* ---------------------------- Toolbar Styling ---------------------------- */
+.toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+  
+  .toolbar button {
+    padding: 5px 10px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #000000;
+    color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .toolbar button:hover {
+    background-color: #333;
+  }
+  
+  .toolbar button:active {
+    background-color: #ccc;
+  }
+  
+  .toolbar button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }

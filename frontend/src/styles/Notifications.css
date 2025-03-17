@@ -1,7 +1,11 @@
 .notification-container {
   padding: 20px;
-  max-width: 600px;
+  max-width: 100%;
   margin: auto;
+}
+
+.notification-container h3 {
+  text-decoration: underline;
 }
 
 .notification-list {

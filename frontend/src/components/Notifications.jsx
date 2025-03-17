@@ -58,7 +58,7 @@ const Notification = () => {
 
   return (
     <div className="notification-container">
-      <h2>Notifications</h2>
+      <h3>Notifications</h3>
       {loading }
       {error && <p className="error-message">{error}</p>}
       <div className="notification-list">

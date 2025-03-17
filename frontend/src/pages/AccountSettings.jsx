@@ -1,23 +1,30 @@
+// src/pages/AccountSettings.js
 import React from "react";
-import "../styles/AccountSettings.css"; // Your custom styles
+import { Link } from "react-router-dom";
+import "../styles/AccountSettings.css";  // Your custom styles
 
 const AccountSettings = ({ setSelectedComponent }) => {
-  const handleOptionSelect = (option) => {
-    // Update selectedComponent state in Dashboard to show appropriate content
-    setSelectedComponent(option); // This will display the content directly in the Dashboard
-  };
-
   return (
     <div className="account-settings">
-      <h1>Account Settings</h1>
-
-      {/* Navigation Tabs */}
-      <div className="settings-tabs">
-        <button onClick={() => handleOptionSelect("profile")}>Edit Profile</button>
-        <button onClick={() => handleOptionSelect("password")}>Password Settings</button>
-        <button onClick={() => handleOptionSelect("notifications")}>Notification Settings</button>
-        <button onClick={() => handleOptionSelect("security")}>Security Settings</button>
-        <button onClick={() => handleOptionSelect("legal")}>Legal & Terms</button>
+      <div className="settings-header">
+        <h3> <b>Account Settings</b></h3>
+      </div>
+      {/* Navigation List */}
+      <div className="settings-list">
+        <ul className="settings-link">
+          <li>
+            <Link to="#" onClick={() => setSelectedComponent("profileSettings")}>Edit Profile</Link>
+          </li>
+          <li>
+            <Link to="#" onClick={() => setSelectedComponent("passwordSettings")}>Password Settings</Link>
+          </li>
+          <li>
+            <Link to="#" onClick={() => setSelectedComponent("notificationSettings")}>Notification Settings</Link>
+          </li>
+          <li>
+            <Link to="#" onClick={() => setSelectedComponent("legalTerms")}>Legal & Terms</Link>
+          </li>
+        </ul>
       </div>
     </div>
   );

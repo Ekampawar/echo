@@ -1,0 +1,44 @@
+/* Tag input container */
+.tag-input-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Tag input field */
+  .tag-input-container input {
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: solid 1px #ddd;
+    outline: none;
+  }
+  
+  /* Display tags in a list */
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  /* Tag styling */
+  .tag {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tag button {
+    background-color: transparent;
+    border: none;
+    color: red;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .tag button:hover {
+    color: darkred;
+  }
+  
