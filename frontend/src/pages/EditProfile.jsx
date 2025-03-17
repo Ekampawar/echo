@@ -80,7 +80,7 @@ const EditProfile = ({ setSelectedComponent }) => {
 
       {success && <div className="success-message">{success}</div>}
 
-      <form onSubmit={handleSubmit} className="edit-profile-form">
+      <form onSubmit={handleSubmit} className="form-container">
       <div className="form-group">
           <label>Profile Picture</label>
           <input type="file" onChange={handleFileUpload} /> {/* ✅ Allow file upload */}

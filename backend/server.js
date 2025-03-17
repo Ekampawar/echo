@@ -50,7 +50,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/blogs', blogRoutes); // Blog routes now handle blog, comments, and likes
+app.use('/api/blogs', blogRoutes); 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use("/api/stats", statsRoutes);

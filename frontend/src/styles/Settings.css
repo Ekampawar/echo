@@ -26,7 +26,7 @@
 
   /* edit profile page */
 
-  .edit-profile-form {
+  .form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,24 +34,24 @@
     justify-content:center;
   }
 
-  .edit-profile-form .form-group {
+  .form-group {
     display: flex;
     flex-direction: column;
     width: 50%;
   }
 
-  .edit-profile-form .form-group label {
+  .form-group label {
     font-size: 1rem;
   }
 
-  .edit-profile-form .form-group input {
+  .form-group input {
     padding: 10px;
     width: 100%;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
   }
 
-  .edit-profile-form button {
+  .form-container button {
     padding: 10px 20px;
     border: none;
     background-color: #000000;
@@ -60,9 +60,26 @@
     cursor: pointer;
   }
 
-  .edit-profile-form button:hover {
+  .form-container button:hover {
     background-color: #333;
   }
+
+  .form-checkbox-group {
+    display: flex;
+    gap: 20px;
+    align-items:center;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 14px;
+  }
+  
+  .success-message {
+    color: green;
+    font-size: 14px;
+  }
+  
 
   /* Responsive Design for smaller screens */
   @media (max-width: 600px) {
