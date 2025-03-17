@@ -35,14 +35,28 @@ axiosInstance.interceptors.response.use(
     console.error("API Error:", errorMessage); // Log error message
 
     if (error.response) {
-      if (error.response.status === 401) {
-        console.warn("Token expired or unauthorized. Logging out...");
-        localStorage.removeItem("token"); // Remove token from localStorage
-        window.location.href = "/login"; // Redirect to login page
-      } else if (error.response.status === 500) {
-        console.error("Server error, please try again later.");
-      } else if (error.response.status === 403) {
-        console.error("Forbidden access, please check your permissions.");
+      const statusCode = error.response.status;
+      switch (statusCode) {
+        case 401:
+          console.warn("Token expired or unauthorized. Logging out...");
+          localStorage.removeItem("token"); // Remove token from localStorage
+          localStorage.removeItem("userData"); // Optionally clear other user data
+          window.location.href = "/login"; // Redirect to login page
+          break;
+        case 500:
+          console.error("Server error, please try again later.");
+          break;
+        case 403:
+          console.error("Forbidden access, please check your permissions.");
+          break;
+        case 404:
+          console.error("Resource not found.");
+          break;
+        case 422:
+          console.error("Validation error.");
+          break;
+        default:
+          console.error("Unexpected error:", errorMessage);
       }
     }
     return Promise.reject(error); // Reject the promise with the error
@@ -90,22 +104,30 @@ const api = {
   getBlogById: (blogId) => axiosInstance.get(`/blogs/${blogId}`),
   updateBlog: (blogId, blogData) => axiosInstance.put(`/blogs/${blogId}`, blogData),
   deleteBlog: (blogId) => axiosInstance.delete(`/blogs/${blogId}`),
-  likeBlog: (blogId) => axiosInstance.post(`/blogs/${blogId}/like`), // Merged like functionality
+  likeBlog: (blogId) => axiosInstance.post(`/blogs/${blogId}/like`),
   getBlogsByTag: (tag) => axiosInstance.get(`/blogs/tags/${tag}`),
+  getUserBlogs: (userID) => axiosInstance.get(`/blogs/user/${userID}`),
 
   // Comment API (Merging with Blog functionality)
-  addCommentToBlog: (blogId, commentData) => axiosInstance.post(`/blogs/${blogId}/comments`, commentData), // Added comments inside blog routes
-  getCommentsByBlogId: (blogId) => axiosInstance.get(`/blogs/${blogId}/comments`), // Get comments from the same blog endpoint
-  deleteComment: (commentId) => axiosInstance.delete(`/blogs/comments/${commentId}`), // Assuming it's merged within blog
+  addCommentToBlog: (blogId, commentData) => axiosInstance.post(`/blogs/${blogId}/comments`, commentData),
+  getCommentsByBlogId: (blogId) => axiosInstance.get(`/blogs/${blogId}/comments`),
+  deleteComment: (commentId) => axiosInstance.delete(`/blogs/comments/${commentId}`),
 
   // Blog Views API (Increment views)
   viewBlog: (slug) => axiosInstance.get(`/blogs/view/${slug}`),
 
-  // Get blog by slug (dynamic routing)
+  // blog by slug (dynamic routing)
   getBlogBySlug: (slug) => axiosInstance.get(`/blogs/slug/${slug}`),
 
-  // Get Stats API
-  getStats: () => axiosInstance.get('/stats'), // Fetch statistics (total blogs, likes, views, top blogs)
+  // Stats API
+  getAdminStats: () => axiosInstance.get("/stats/admin"),
+  getUserStats: (userId) => axiosInstance.get(`/stats/user/${userId}`),
+
+  // Notification API
+  getNotifications: (userId) => axiosInstance.get(`/notifications/${userId}`), // Fetch notifications for a user
+  markNotificationAsRead: (notificationId) => axiosInstance.put(`/notifications/${notificationId}/read`), // Mark a notification as read
+  likeNotification: (userId, blogId) => axiosInstance.post(`/notifications/like`, { userId, blogId }), // Like notification
+  commentNotification: (userId, blogId, commentText) => axiosInstance.post(`/notifications/comment`, { userId, blogId, commentText }), // Comment notification
 };
 
 export { axiosInstance, api };

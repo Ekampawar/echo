@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';  // Import Link from react-router-dom
+import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Sidebar.css';
 
 const Sidebar = ({ setSelectedComponent }) => {
@@ -9,7 +9,6 @@ const Sidebar = ({ setSelectedComponent }) => {
   const defaultImage = '/default-profile-pic.jpg'; // Default profile picture
   const [profileImage, setProfileImage] = useState(defaultImage);
 
-  // Update profile image when user profile photo changes
   useEffect(() => {
     setProfileImage(user?.profilePhoto || defaultImage);
   }, [user?.profilePhoto]);
@@ -28,7 +27,7 @@ const Sidebar = ({ setSelectedComponent }) => {
           <img
             src={profileImage}
             alt="User Avatar"
-            onError={() => setProfileImage(defaultImage)} // Fallback for broken images
+            onError={() => setProfileImage(defaultImage)}
           />
         </div>
       </div>
@@ -40,15 +39,15 @@ const Sidebar = ({ setSelectedComponent }) => {
             </span>
           </li>
           <li>
-            <Link to="/write" className="sidebar-link">Write</Link>
-          </li>
-          <li>
             <span className="sidebar-link" onClick={() => setSelectedComponent('userBlogs')}>
               My Blogs
             </span>
           </li>
           <li>
-            <Link to="/blogs" className="sidebar-link">Discover</Link>
+            <Link to="/write" className="sidebar-link">Write</Link>
+          </li>
+          <li>
+            <Link to="/blogs" className="sidebar-link">Explore</Link>
           </li>
           {user?.role === 'admin' ? (
             <>
@@ -70,7 +69,7 @@ const Sidebar = ({ setSelectedComponent }) => {
             </>
           ) : (
             <li>
-              <span className="sidebar-link" onClick={() => setSelectedComponent('userComments')}>
+              <span className="sidebar-link" onClick={() => setSelectedComponent('notifications')}>
                 Notifications
               </span>
             </li>

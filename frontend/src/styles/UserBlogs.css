@@ -12,9 +12,8 @@ body {
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+  border: none;
+  max-width: 100%;
   margin: 20px auto;
 }
 
@@ -73,4 +72,18 @@ body {
 
 .delete-button:hover {
   background-color: #c82333;
+}
+
+.write-blog-button {
+  background-color: #000000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.write-blog-button:hover {
+  background-color: #333;
 }

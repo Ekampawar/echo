@@ -82,19 +82,19 @@ const Signup = () => {
 
     return (
         <div className="signup-container">
-            <form onSubmit={handleSubmit} className="form-wrapper">
-                <h2 className="form-title">Signup</h2>
+            <form onSubmit={handleSubmit} className="auth-form-wrapper">
+                <h2 className="auth-form-title">Signup</h2>
 
                 {/* Display error message if any */}
                 {error && <div className="error-message">{error}</div>}
 
-                <div className="form-group">
-                    <label htmlFor="username" className="form-label">Username</label>
+                <div className="auth-form-group">
+                    <label htmlFor="username" className="auth-form-label">Username</label>
                     <input
                         type="text"
                         id="username"
                         name="username"
-                        className="form-input"
+                        className="auth-form-input"
                         placeholder="Enter your username"
                         value={formData.username}
                         onChange={handleChange}
@@ -102,13 +102,13 @@ const Signup = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="email" className="form-label">Email Address</label>
+                <div className="auth-form-group">
+                    <label htmlFor="email" className="auth-form-label">Email Address</label>
                     <input
                         type="email"
                         id="email"
                         name="email"
-                        className="form-input"
+                        className="auth-form-input"
                         placeholder="Enter your email"
                         value={formData.email}
                         onChange={handleChange}
@@ -116,13 +116,13 @@ const Signup = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="password" className="form-label">Password</label>
+                <div className="auth-form-group">
+                    <label htmlFor="password" className="auth-form-label">Password</label>
                     <input
                         type="password"
                         id="password"
                         name="password"
-                        className="form-input"
+                        className="auth-form-input"
                         placeholder="Enter your password"
                         value={formData.password}
                         onChange={handleChange}
@@ -130,13 +130,13 @@ const Signup = () => {
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                <div className="auth-form-group">
+                    <label htmlFor="confirmPassword" className="auth-form-label">Confirm Password</label>
                     <input
                         type="password"
                         id="confirmPassword"
                         name="confirmPassword"
-                        className="form-input"
+                        className="auth-form-input"
                         placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -146,13 +146,13 @@ const Signup = () => {
 
                 <button 
                     type="submit" 
-                    className="form-button" 
+                    className="auth-form-button" 
                     disabled={isLoading || !formData.username || !formData.email || !formData.password || !formData.confirmPassword}
                 >
                     {isLoading ? "Signing Up..." : "Sign Up"}
                 </button>
 
-                <div className="form-link">
+                <div className="auth-form-link">
                     <p>Already have an account? <Link to="/login">Login</Link></p>
                 </div>
             </form>

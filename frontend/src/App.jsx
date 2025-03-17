@@ -8,7 +8,9 @@ import Home from './pages/Home';
 import WriteBlog from './pages/WriteBlog';
 import EditBlog from './pages/EditBlog';
 import Blogs from './pages/Blogs';
-import BlogPage from './components/BlogPage'; 
+import BlogPage from './components/BlogPage';
+import AccountSettings from "./pages/AccountSettings";
+import SettingDetailPage from "./pages/SettingDetailPage";
 import PrivateRoute from './context/PrivateRoute';  // Import PrivateRoute
 
 function App() {
@@ -22,10 +24,16 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:slug" element={<BlogPage />} />
+
           {/* Private Pages */}
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/write" element={<PrivateRoute><WriteBlog /></PrivateRoute>} />
-          <Route path="/edit/:id" element={<PrivateRoute><EditBlog /></PrivateRoute>} />
+          <Route path="/edit/:blogId" element={<PrivateRoute><EditBlog /></PrivateRoute>} />
+          
+          {/* Account Settings Pages */}
+          <Route path="/settings" element={<PrivateRoute><AccountSettings /></PrivateRoute>} />
+          <Route path="/settings/:option" element={<PrivateRoute><SettingDetailPage /></PrivateRoute>} />
+          
         </Routes>
       </AuthProvider>
     </Router>

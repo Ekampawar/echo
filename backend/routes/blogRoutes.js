@@ -25,6 +25,9 @@ const createUpdateBlogValidation = [
   body('tags').optional().isArray().withMessage('Tags should be an array of strings')
 ];
 
+// 🔹 Ensure Slug Route is Before ID Route
+router.get('/slug/:slug', getBlogBySlug);
+
 // Get all blogs (no authentication needed)
 router.get('/', getAllBlogs);
 
@@ -38,24 +41,32 @@ router.get('/user/:userId', authMiddleware, param('userId').isMongoId().withMess
 router.post('/', authMiddleware, createUpdateBlogValidation, createBlog);
 
 // Update a blog (authentication required)
-router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), createUpdateBlogValidation, updateBlog);
+router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), updateBlog);
 
 // Delete a blog (authentication required)
 router.delete('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), deleteBlog);
 
-// Get a blog by its slug (no authentication needed)
-router.get('/slug/:slug', getBlogBySlug);
-
-// Add a comment to a blog (authentication required)
-router.post('/:blogId/comments', authMiddleware, addComment);
+// 🔹 Validation for Adding Comments
+router.post(
+  '/:blogId/comments',
+  authMiddleware,
+  param('blogId').isMongoId().withMessage('Invalid blog ID'),
+  body('content').notEmpty().withMessage('Comment content is required'),
+  addComment
+);
 
 // Get comments for a blog
-router.get('/:blogId/comments', getCommentsByBlog);
+router.get('/:blogId/comments', param('blogId').isMongoId().withMessage('Invalid blog ID'), getCommentsByBlog);
 
-// Toggle like (authentication required)
-router.post('/:blogId/like', authMiddleware, toggleLike);
+// 🔹 Validation for Likes
+router.post(
+  '/:blogId/like',
+  authMiddleware,
+  param('blogId').isMongoId().withMessage('Invalid blog ID'),
+  toggleLike
+);
 
 // Get likes for a blog
-router.get('/:blogId/likes', getLikesByBlog);
+router.get('/:blogId/likes', param('blogId').isMongoId().withMessage('Invalid blog ID'), getLikesByBlog);
 
 module.exports = router;

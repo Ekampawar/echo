@@ -1,5 +1,6 @@
 import React from "react";
 import { RichUtils } from "draft-js";
+import "../styles/TextToolbar.css";
 
 const TextToolbar = ({ editorState, setEditorState }) => {
   // Handle inline text formatting

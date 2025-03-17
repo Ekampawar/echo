@@ -9,10 +9,11 @@ const winston = require('winston'); // Consider using a better logging strategy
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
-const blogRoutes = require('./routes/blogRoutes'); // Combined blog, comment, and like routes
+const blogRoutes = require('./routes/blogRoutes'); 
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const statsRouter = require('./routes/statsRoutes');
+const statsRoutes = require("./routes/statsRoutes");
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -49,10 +50,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/blogs', blogRoutes); // Blog routes now handle blog, comments, and likes
+app.use('/api/blogs', blogRoutes); 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api', statsRouter);
+app.use("/api/stats", statsRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
@@ -76,7 +78,7 @@ const connectDB = async () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
-      console.log('✅ MongoDB Connected');
+      console.log('✅ MongoDB Connected');      
       break; // Exit loop on success
     } catch (error) {
       attempts++;

@@ -22,7 +22,7 @@ body {
   background-color: #f9f9f9;
 }
 
-.form-wrapper {
+.auth-form-wrapper {
   background-color: #fff;
   padding: 40px;
   border-radius: 5px;
@@ -31,23 +31,23 @@ body {
   max-width: 400px;
 }
 
-.form-title {
+.auth-form-title {
   font-size: 2em;
   margin-bottom: 20px;
   text-align: center;
 }
 
-.form-group {
+.auth-form-group {
   margin-bottom: 20px;
 }
 
-.form-label {
+.auth-form-label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
 }
 
-.form-input {
+.auth-form-input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -55,7 +55,7 @@ body {
   font-size: 1em;
 }
 
-.form-button {
+.auth-form-button {
   width: 100%;
   padding: 15px;
   background-color: #333;
@@ -67,26 +67,26 @@ body {
   font-weight: bold;
 }
 
-.form-button:disabled {
+.auth-form-button:disabled {
   background-color: #ccc;
 }
 
-.form-button:hover:not(:disabled) {
+.auth-form-button:hover:not(:disabled) {
   background-color: #555;
 }
 
-.form-link {
+.auth-form-link {
   text-align: center;
   margin-top: 20px;
 }
 
-.form-link a {
+.auth-form-link a {
   color: #333;
   text-decoration: none;
   font-weight: bold;
 }
 
-.form-link a:hover {
+.auth-form-link a:hover {
   text-decoration: underline;
 }
 

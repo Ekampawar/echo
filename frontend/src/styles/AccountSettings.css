@@ -1,0 +1,50 @@
+.account-settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  max-width: 100%;
+  height: 60vh;
+  margin: auto;
+  background: #ffffff;
+}
+
+.settings-header {
+  display: flex;
+  align-self: center;
+}
+
+.settings-list ul {
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  list-style: none;
+  width: 60%;
+}
+
+.settings-list li {
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  color: #000000;
+  background-color: #ffffff;
+  border-radius: 10px;
+  transition: 0.3s;
+  text-align: left; /* Center the text inside the list item */
+}
+
+/* This is the key update */
+.settings-list li a {
+  display: block; /* Make the link take the full width and height of the li */
+  text-decoration: none; /* Remove the underline from links */
+  color: inherit; /* Inherit the text color from the li */
+  width: 100%;
+  height: 100%;
+}
+
+.settings-list li:hover {
+  color: #ffffff;
+  background: #333;
+  scale: 1.1;
+}

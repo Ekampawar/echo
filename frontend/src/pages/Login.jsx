@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Form.css";
-import ErrorModal from "../components/ErrorModel"; 
+import ErrorModal from "../components/ErrorModal"; 
 
 const Login = () => {
   const { login, error, loading } = useAuth();
@@ -36,17 +36,17 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <form onSubmit={handleSubmit} className="form-wrapper">
-        <h2 className="form-title">Login</h2>
+      <form onSubmit={handleSubmit} className="auth-form-wrapper">
+        <h2 className="auth-form-title">Login</h2>
 
-        <div className="form-group">
-          <label htmlFor="email" className="form-label">
+        <div className="auth-form-group">
+          <label htmlFor="email" className="auth-form-label">
             Email Address
           </label>
           <input
             type="email"
             id="email"
-            className="form-input"
+            className="auth-form-input"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -55,14 +55,14 @@ const Login = () => {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="password" className="form-label">
+        <div className="auth-form-group">
+          <label htmlFor="password" className="auth-form-label">
             Password
           </label>
           <input
             type="password"
             id="password"
-            className="form-input"
+            className="auth-form-input"
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -71,11 +71,11 @@ const Login = () => {
           />
         </div>
 
-        <button type="submit" className="form-button" disabled={loading}>
+        <button type="submit" className="auth-form-button" disabled={loading}>
           {loading ? "Logging In..." : "Login"}
         </button>
 
-        <div className="form-link">
+        <div className="auth-form-link">
           <p>
             Don't have an account? <a href="/signup">Sign up</a>
           </p>

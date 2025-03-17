@@ -5,7 +5,7 @@ import { api } from '../utils/axiosInstance';
 import BlogLayout from '../components/BlogLayout';
 import { Editor, EditorState, convertToRaw } from 'draft-js';
 import TextToolbar from '../components/TextToolbar';
-import ErrorModal from '../components/ErrorModel';
+import ErrorModal from '../components/ErrorModal';
 import TagInput from '../components/TagInput'; // Import the TagInput component
 import "../styles/BlogForm.css";
 
