@@ -96,3 +96,51 @@ body {
 .blog-card a:hover {
   text-decoration: underline;
 }
+
+.popular-blogs {
+  padding: 40px;
+  background-color: #f8f8f8;
+}
+
+.blogs-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.blogs-section {
+  width: 50%;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blogs-section h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.blogs-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.blogs-section li {
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.blogs-section li:last-child {
+  border-bottom: none;
+}
+
+.blogs-section a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.blogs-section a:hover h3 {
+  color: #007bff;
+}

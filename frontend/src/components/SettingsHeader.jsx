@@ -1,16 +1,15 @@
 // src/components/SettingsHeader.js
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";  // Import back arrow icon
-import "../styles/Settings.css";  // Add any styling you need
-
+import "../styles/Settings.css"; 
 const SettingsHeader = ({ title, onBack }) => {
   return (
     <div className="settings-header">
       <FaArrowLeft 
         className="back-arrow" 
         onClick={() => {
-          console.log("Back arrow clicked!");  // Debugging line
-          onBack();  // Execute onBack function when clicked
+          console.log("Back arrow clicked!");  
+          onBack(); 
         }} 
         aria-label="Go back to previous page" 
       />

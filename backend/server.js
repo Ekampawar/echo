@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const redisClient = require('./utils/redisClient');
 require('dotenv').config();
 const path = require('path');
 const cors = require('cors');
@@ -56,9 +57,32 @@ app.use('/api/admin', adminRoutes);
 app.use("/api/stats", statsRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Health Check Route
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: "OK", message: "Server is running!" });
+// Health Check Route with Redis and MongoDB status check
+app.get('/api/health', async (req, res) => {
+  try {
+    // MongoDB Status Check
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+
+    // Redis Status Check
+    const redisStatus = await new Promise((resolve, reject) => {
+      redisClient.ping((err, response) => {
+        if (err) {
+          reject('disconnected');
+        } else {
+          resolve(response); // Should return "PONG" if Redis is working
+        }
+      });
+    });
+
+    res.status(200).json({
+      status: "OK",
+      message: "Server is running",
+      dbStatus: dbStatus,
+      redisStatus: redisStatus === 'PONG' ? 'connected' : 'disconnected',
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Health check failed", error: error.message });
+  }
 });
 
 // Unified Error Handling Middleware
@@ -91,6 +115,15 @@ const connectDB = async () => {
     }
   }
 };
+
+// Redis Connection Handling and Logging
+redisClient.on('connect', () => {
+  console.log('✅ Redis Connected');
+});
+
+redisClient.on('error', (err) => {
+  console.error('🚨 Redis Connection Error:', err);
+});
 
 connectDB();
 

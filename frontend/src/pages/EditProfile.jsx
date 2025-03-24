@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SettingsHeader from "../components/SettingsHeader"; 
 import { api } from "../utils/axiosInstance";
-import ErrorModal from "../components/ErrorModal"; // ✅ Import ErrorModal
+import ErrorModal from "../components/ErrorModal"; // Import ErrorModal
 import "../styles/Settings.css";
 
 const EditProfile = ({ setSelectedComponent }) => {
@@ -12,7 +12,7 @@ const EditProfile = ({ setSelectedComponent }) => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // ✅ Use ErrorModal
+  const [errorMessage, setErrorMessage] = useState(""); // Use ErrorModal
   const [success, setSuccess] = useState("");
 
   // Handle input change

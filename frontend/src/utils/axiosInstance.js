@@ -103,10 +103,13 @@ const api = {
   getBlogs: () => axiosInstance.get("/blogs"),
   getBlogById: (blogId) => axiosInstance.get(`/blogs/${blogId}`),
   updateBlog: (blogId, blogData) => axiosInstance.put(`/blogs/${blogId}`, blogData),
+  getFeaturedBlogs: () => axiosInstance.get('/blogs/featured'),
   deleteBlog: (blogId) => axiosInstance.delete(`/blogs/${blogId}`),
   likeBlog: (blogId) => axiosInstance.post(`/blogs/${blogId}/like`),
   getBlogsByTag: (tag) => axiosInstance.get(`/blogs/tags/${tag}`),
   getUserBlogs: (userID) => axiosInstance.get(`/blogs/user/${userID}`),
+  getMostLikedBlogs: () => axiosInstance.get("/blogs/most-liked"),
+  getTrendingBlogs: () => axiosInstance.get("/blogs/trending"),
 
   // Comment API (Merging with Blog functionality)
   addCommentToBlog: (blogId, commentData) => axiosInstance.post(`/blogs/${blogId}/comments`, commentData),
