@@ -12,6 +12,8 @@ import BlogPage from './components/BlogPage';
 import AccountSettings from "./pages/AccountSettings";
 import SettingDetailPage from "./pages/SettingDetailPage";
 import PrivateRoute from './context/PrivateRoute';  // Import PrivateRoute
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   return (

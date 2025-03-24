@@ -9,6 +9,25 @@ import ErrorModal from '../components/ErrorModal';
 import TagInput from '../components/TagInput'; // Import the TagInput component
 import "../styles/BlogForm.css";
 
+// Custom font size styles
+const customStyleMap = {
+  FONT_SIZE_16px: {
+    fontSize: "16px",
+  },
+  FONT_SIZE_18px: {
+    fontSize: "18px",
+  },
+  FONT_SIZE_20px: {
+    fontSize: "20px",
+  },
+  FONT_SIZE_24px: {
+    fontSize: "24px",
+  },
+  FONT_SIZE_28px: {
+    fontSize: "28px",
+  },
+};
+
 const WriteBlog = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -38,6 +57,13 @@ const WriteBlog = () => {
     const hasText = content.blocks.some(block => block.text.trim() !== '');
     if (!hasText) {
       setError('Content cannot be empty.');
+      setShowErrorModal(true);
+      return;
+    }
+
+    // Check if tags are empty
+    if (tags.length === 0) {
+      setError('Please add at least one tag.');
       setShowErrorModal(true);
       return;
     }
@@ -92,10 +118,17 @@ const WriteBlog = () => {
           onChange={(e) => setTitle(e.target.value)}
           className="blog-title-input"
           placeholder="Title"
+          aria-label="Blog Title"
         />
         <TextToolbar editorState={editorState} setEditorState={setEditorState} />
         <div className="editor-container">
-          <Editor editorState={editorState} onChange={onEditorChange} placeholder="Write your content here..." />
+          <Editor 
+            editorState={editorState} 
+            onChange={onEditorChange} 
+            placeholder="Write your content here..." 
+            customStyleMap={customStyleMap} // Apply custom style map to the editor
+            aria-label="Blog Content"
+          />
         </div>
       </div>
 

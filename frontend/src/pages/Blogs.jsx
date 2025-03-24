@@ -13,8 +13,15 @@ const Blogs = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await api.getBlogs(); // Using the correct API function
-                setBlogs(response.data.data);  // Set blogs data
+                const response = await api.getBlogs();
+                console.log(response); // Log to verify structure
+
+                // Directly use response.data (since it's an array)
+                if (Array.isArray(response.data)) {
+                    setBlogs(response.data);
+                } else {
+                    setError('Unexpected response structure.');
+                }
                 setLoading(false);
             } catch (err) {
                 setError('Failed to load blogs. Please try again later.');
@@ -26,17 +33,23 @@ const Blogs = () => {
     }, []);
 
     const renderBlogContent = (rawContent) => {
+        if (!rawContent) return "No content available";
         try {
             const contentState = convertFromRaw(JSON.parse(rawContent));
             const content = contentState.getPlainText();
-            return content.length > 150 ? `${content.slice(0, 150)}...` : content; // Display a preview
+            return content.length > 150 ? `${content.slice(0, 150)}...` : content;
         } catch (err) {
             return "Unable to render content";
         }
     };
 
-    if (loading) return <div className="loading-spinner">Loading...</div>; // Optionally replace with a spinner
+    if (loading) return <div className="loading-spinner">Loading...</div>;
     if (error) return <p>{error}</p>;
+
+    // Ensure blogs is an array before accessing its length
+    if (!Array.isArray(blogs)) {
+        return <p>Unexpected response structure.</p>;
+    }
 
     return (
         <div>

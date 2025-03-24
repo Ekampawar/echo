@@ -10,10 +10,14 @@ const {
   addComment,
   getCommentsByBlog,
   toggleLike,
-  getLikesByBlog
+  getLikesByBlog,
+  getFeaturedBlogs,
+  getMostLikedBlogs,
+  getTrendingBlogs
 } = require('../controllers/blogController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { body, param } = require('express-validator');
+const { checkCache, cacheResponse } = require('../middleware/cacheMiddleware');
 
 const router = express.Router();
 
@@ -25,14 +29,16 @@ const createUpdateBlogValidation = [
   body('tags').optional().isArray().withMessage('Tags should be an array of strings')
 ];
 
-// 🔹 Ensure Slug Route is Before ID Route
-router.get('/slug/:slug', getBlogBySlug);
-
 // Get all blogs (no authentication needed)
-router.get('/', getAllBlogs);
+router.get('/', checkCache, getAllBlogs);
 
-// Get a single blog by ID (no authentication needed)
-router.get('/:id', param('id').isMongoId().withMessage('Invalid blog ID'), getBlogById);
+router.get("/most-liked", getMostLikedBlogs); 
+
+router.get("/trending", getTrendingBlogs);
+
+
+// Route to get featured blogs
+router.get('/featured', checkCache , getFeaturedBlogs)
 
 // Get blogs by a specific user (authentication required)
 router.get('/user/:userId', authMiddleware, param('userId').isMongoId().withMessage('Invalid user ID'), getBlogsByUser);
@@ -46,6 +52,11 @@ router.put('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid 
 // Delete a blog (authentication required)
 router.delete('/:id', authMiddleware, param('id').isMongoId().withMessage('Invalid blog ID'), deleteBlog);
 
+router.get('/slug/:slug', checkCache, getBlogBySlug);
+
+// Get a single blog by ID (no authentication needed)
+router.get('/:id', param('id').isMongoId().withMessage('Invalid blog ID'), checkCache ,getBlogById);
+
 // 🔹 Validation for Adding Comments
 router.post(
   '/:blogId/comments',
@@ -56,7 +67,7 @@ router.post(
 );
 
 // Get comments for a blog
-router.get('/:blogId/comments', param('blogId').isMongoId().withMessage('Invalid blog ID'), getCommentsByBlog);
+router.get('/:blogId/comments', param('blogId').isMongoId().withMessage('Invalid blog ID'), checkCache, getCommentsByBlog);
 
 // 🔹 Validation for Likes
 router.post(
